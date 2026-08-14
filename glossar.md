@@ -1,15 +1,32 @@
+# Glossar
+
+Dieses Glossar enthält Begriffe, die im Homelab verwendet werden. Die Erklärungen beziehen sich auf ihren Einsatz innerhalb des Projekts.
+
 ## Virtualisierung
 
-Virtualisierung bedeutet, dass eine Software-Schicht so tut, als wäre sie ein eigener Computer, obwohl sie nur als Programm auf einem realen Rechner läuft. Diese Schicht heißt Hypervisor und sitzt zwischen echter Hardware und den Betriebssystemen darüber. Auf einem einzigen physischen Gerät arbeiten dadurch mehrere voneinander abgeschottete Systeme parallel, jedes davon denkt, es hätte den Rechner für sich.
+Bei der Virtualisierung werden auf einem physischen Rechner mehrere voneinander getrennte virtuelle Systeme betrieben.
 
-Der Sinn dahinter ist Auslastung und Flexibilität. Ein moderner Mini-PC ist unterfordert, wenn nur Pi-hole darauf läuft. Packt man stattdessen Firewall, Windows Server und mehrere Linux-Dienste als virtuelle Maschinen (VMs) auf dieselbe Hardware, nutzt man das Gerät ehrlich aus. Dazu kommt, dass eine VM technisch gesehen eine Datei ist. Man kann sie kopieren, sichern, auf einen anderen Rechner umziehen oder per Snapshot in einen früheren Zustand zurücksetzen, falls beim Experimentieren etwas kaputtgeht.
+Eine zentrale Komponente ist der **Hypervisor**. Er stellt virtuellen Maschinen Ressourcen wie CPU, Arbeitsspeicher, Netzwerkinterfaces und virtuelle Datenträger zur Verfügung.
 
-Die echte Maschine, auf der der Hypervisor läuft, heißt Host. Die VMs, die er ausführt, heißen Gäste. In meinem Lab ist der Mini-PC der Host, Proxmox der Hypervisor, und OPNsense, Windows Server sowie Linux-Systeme sind die Gäste.
+Der physische Rechner wird als **Host** bezeichnet. Die darauf betriebenen virtuellen Maschinen sind die **Gäste** beziehungsweise **VMs**.
 
-## VLAN (Virtual Local Area Network)
+Im aktuellen Homelab übernimmt KVM zusammen mit QEMU die Virtualisierung. libvirt dient als Verwaltungsschicht.
 
-Ein VLAN ist ein logisch abgegrenztes Netzwerk innerhalb eines physischen Switches. Mehrere VLANs teilen sich dieselbe Hardware, sehen sich aber gegenseitig nicht, als wären es separate Switches. Möglich macht das ein kleiner Anhang an jedem Datenpaket, die VLAN-ID, anhand der der Switch entscheidet, wohin er das Paket weiterleiten darf. Der zugrundeliegende Standard heißt 802.1Q.
+Durch Virtualisierung können mehrere Serversysteme auf derselben Hardware betrieben und unabhängig voneinander konfiguriert und getestet werden.
 
-Der Sinn dahinter ist Trennung. Server, Clients, Management-Zugänge und experimentelle Test-Maschinen lassen sich in eigene Bereiche stecken, ohne dass man für jeden Bereich einen eigenen Switch kaufen muss. Wer in einem VLAN sitzt, kann ein Gerät im anderen VLAN nicht direkt erreichen, sondern nur über einen Router, der dazwischen vermittelt. Genau dort greifen dann Firewall-Regeln, die festlegen, wer mit wem reden darf.
+## VLAN – Virtual Local Area Network
 
-In meinem Lab trennen VLANs die Verwaltung (Proxmox-Oberfläche, OPNsense-Admin), die Server-Dienste (Active Directory, Linux-Anwendungen) und die Test-Clients voneinander. Eine kompromittierte Test-VM erreicht so weder den AD-Server noch die Lab-Verwaltung, solange OPNsense nichts erlaubt.
+Ein VLAN teilt ein physisches Netzwerk logisch in mehrere getrennte Layer-2-Netze auf.
+
+Geräte in unterschiedlichen VLANs befinden sich in unterschiedlichen Broadcast-Domänen. Eine Kommunikation zwischen diesen Netzen benötigt Routing.
+
+Bei VLAN-Verbindungen zwischen Netzwerkkomponenten wird häufig IEEE 802.1Q verwendet. Dabei kann ein Ethernet-Frame einen VLAN-Tag enthalten, über den er einem bestimmten VLAN zugeordnet wird.
+
+In der geplanten Homelab-Architektur sollen VLANs beispielsweise unterschiedliche Bereiche voneinander trennen:
+
+* Management
+* Server
+* Clients und Testsysteme
+
+Welche Kommunikation zwischen diesen Netzen erlaubt ist, soll später über Routing und Firewall-Regeln festgelegt werden.
+

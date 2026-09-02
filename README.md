@@ -65,7 +65,7 @@ Bei Änderungen versuche ich nach einem festen Ablauf vorzugehen:
 
 Wenn etwas nicht funktioniert, möchte ich die Ursache nachvollziehen, bevor ich Änderungen vornehme.
 
-Ein Beispiel dafür ist die dokumentierte Fehlersuche bei einem Zugriffsproblem auf `~/.ssh`. Statt die Berechtigungsfehlermeldung direkt mit `sudo` zu umgehen, wurden zunächst Eigentümer und Verzeichnisrechte geprüft und anschließend die eigentliche Ursache behoben.
+Ein Beispiel dafür ist die dokumentierte Fehlersuche bei einem Zugriffsproblem auf `~/.ssh`. Statt die Berechtigungsfehlermeldung direkt mit `sudo` zu umgehen, wurden zunächst Eigentümer und Verzeichnisrechte geprüft und die fehlerhaften Berechtigungen anschließend gezielt korrigiert.
 
 ## Nächste Schritte
 

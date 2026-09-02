@@ -111,7 +111,7 @@ ssh srv-linux01
 
 Der Test war erfolgreich.
 
-Beim Einrichten der SSH-Client-Konfiguration trat auf dem Host ein Berechtigungsproblem auf. Die Fehlersuche und Behebung ist unter 01-home-directory-permissions.md dokumentiert.
+Beim Einrichten der SSH-Client-Konfiguration trat auf dem Host ein Berechtigungsproblem auf. Die Fehlersuche und Behebung ist unter [`01-home-directory-permissions.md`](troubleshooting/01-home-directory-permissions.md) dokumentiert.
 
 ## Vereinfachter Ablauf der Authentifizierung
 

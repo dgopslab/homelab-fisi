@@ -1,70 +1,61 @@
 # Homelab FISI
 
-Dieses Repository dokumentiert mein persönliches Homelab während meiner Umschulung zum Fachinformatiker für Systemintegration.
+Dieses Repository dokumentiert mein persönliches Homelab während meiner Umschulung zum **Fachinformatiker für Systemintegration**.
 
-Das Lab dient dazu, Themen aus der Umschulung praktisch umzusetzen und technische Zusammenhänge nicht nur theoretisch, sondern an realen Systemen nachzuvollziehen.
+Ich nutze das Lab, um Themen aus der Umschulung praktisch nachzuvollziehen, Konfigurationen selbst auszuprobieren und auftretende Fehler systematisch zu untersuchen.
 
 ## Aktueller Aufbau
 
-Das Homelab läuft derzeit auf meinem Desktop-PC unter Pop!_OS.
+Das Homelab läuft derzeit auf meinem Desktop-PC unter **Pop!_OS 22.04 LTS**.
 
-Eingesetzte Komponenten:
+Für die Virtualisierung verwende ich:
 
-* KVM/QEMU zur Virtualisierung
-* libvirt zur Verwaltung der virtuellen Umgebung
-* virt-manager und virsh zur Administration
-* libvirt-NAT-Netzwerk für die virtuellen Maschinen
-* Ubuntu Server als erste Server-VM
-* SSH für die Remoteadministration
-* Tailscale für den externen Zugriff auf den Homelab-Host
+* KVM/QEMU
+* libvirt
+* virt-manager und virsh
+* das libvirt-Netzwerk `default` im NAT-Modus
 
-Die erste virtuelle Maschine ist:
+Als erste Server-VM läuft:
 
-`srv-linux01` – Ubuntu Server 24.04 LTS
+`srv-linux01` – Ubuntu Server 24.04.4 LTS
 
-## Aktuelle Lernbereiche
+Die VM befindet sich aktuell im virtuellen Netz `192.168.122.0/24` und erhält ihre Netzwerkkonfiguration per DHCP über libvirt.
 
-Im Lab beschäftige ich mich derzeit unter anderem mit:
+Für den externen Zugriff auf den Homelab-Host verwende ich Tailscale.
 
-* Linux-Serveradministration
-* IPv4, Routing, DNS und DHCP
-* Virtualisierung
-* SSH und Authentifizierung
-* Benutzer- und Rechteverwaltung
-* Fehlersuche und Netzwerkdiagnose
-* Git und technischer Dokumentation
+## Bisher umgesetzt und untersucht
 
-## Zielarchitektur
+Im bisherigen Aufbau habe ich unter anderem:
 
-Langfristig soll das Homelab auf einen dedizierten Server umziehen und schrittweise erweitert werden.
+* den Homelab-Host und seine Virtualisierungsumgebung überprüft
+* eine Ubuntu-Server-VM mit KVM/QEMU und libvirt eingerichtet
+* das virtuelle NAT-Netzwerk sowie Gateway, Routing und DNS-Verhalten untersucht
+* die VM über SSH administriert
+* ein eigenes Ed25519-Schlüsselpaar für das Homelab eingerichtet
+* die SSH-Client-Konfiguration für `srv-linux01` eingerichtet und getestet
+* Linux-Datei- und Verzeichnisrechte bei einer konkreten Berechtigungsstörung untersucht
 
-Geplant sind unter anderem:
-
-* Proxmox VE
-* OPNsense
-* Managed Switch und VLANs
-* Windows Server und Active Directory
-* Linux-Server
-* DNS und DHCP
-* Monitoring
-* Docker und weitere Container-Dienste
-
-Die Architektur wird erst erweitert, wenn die jeweiligen Grundlagen praktisch verstanden und getestet wurden.
+Dabei dokumentiere ich möglichst nicht nur die verwendeten Befehle, sondern auch, was ich damit prüfe und wie ich das Ergebnis einordne.
 
 ## Dokumentation
 
-Technische Schritte und überprüfte Systemzustände werden unter [`docs/`](docs/) dokumentiert.
-
-Aktuell vorhanden:
+### Aufbau und Systeme
 
 * [`01-host-baseline.md`](docs/01-host-baseline.md) – Ausgangszustand des Homelab-Hosts
-* [`glossar.md`](glossar.md) – Begriffe, die im Projekt verwendet werden
+* [`02-srv-linux01.md`](docs/02-srv-linux01.md) – Aufbau und erste Überprüfung der Linux-Server-VM
+* [`03-ssh.md`](docs/03-ssh.md) – Einrichtung und Test der SSH-Key-Authentifizierung
 
-Die Dokumentation wächst zusammen mit dem Lab.
+### Troubleshooting
+
+* [`01-home-directory-permissions.md`](docs/troubleshooting/01-home-directory-permissions.md) – Fehlersuche bei einem Berechtigungsproblem im Home-Verzeichnis
+
+### Begleitende Notizen
+
+* [`glossar.md`](glossar.md) – Begriffe, die im Homelab verwendet werden
 
 ## Arbeitsweise
 
-Bei Änderungen versuche ich nach einem festen Schema vorzugehen:
+Bei Änderungen versuche ich nach einem festen Ablauf vorzugehen:
 
 1. Ist-Zustand erfassen
 2. technisches Verhalten verstehen
@@ -72,7 +63,24 @@ Bei Änderungen versuche ich nach einem festen Schema vorzugehen:
 4. Ergebnis testen
 5. Erkenntnisse dokumentieren
 
-Konfigurationen werden nicht nur übernommen, sondern möglichst auf ihre Funktion und Auswirkungen untersucht.
+Wenn etwas nicht funktioniert, möchte ich die Ursache nachvollziehen, bevor ich Änderungen vornehme.
+
+Ein Beispiel dafür ist die dokumentierte Fehlersuche bei einem Zugriffsproblem auf `~/.ssh`. Statt die Berechtigungsfehlermeldung direkt mit `sudo` zu umgehen, wurden zunächst Eigentümer und Verzeichnisrechte geprüft und anschließend die eigentliche Ursache behoben.
+
+## Nächste Schritte
+
+Als Nächstes möchte ich den bestehenden Aufbau weiter vertiefen. Dazu gehören unter anderem:
+
+* effektive SSH-Serverkonfiguration untersuchen
+* Passwortauthentifizierung nach weiteren Tests bewerten
+* Benutzer, Gruppen und Linux-Dateirechte praktisch vertiefen
+* Prozesse, Services und systemd untersuchen
+* Logs mit `journalctl` auswerten
+* die vorbereitete LVM-Erweiterung praktisch durchführen
+* Netzwerkdiagnose weiter ausbauen
+
+Ein dedizierter Virtualisierungsserver und getrennte Netze mit VLANs sind mögliche spätere Ausbaustufen. Solche Erweiterungen möchte ich schrittweise umsetzen, wenn ich die dafür benötigten Grundlagen praktisch erarbeitet habe.
+
+## Sicherheit
 
 Passwörter, private Schlüssel, Tokens und andere Zugangsdaten werden nicht im Repository gespeichert.
-

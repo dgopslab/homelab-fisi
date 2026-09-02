@@ -148,38 +148,46 @@ Beide Tests waren erfolgreich.
 
 Während der Ubuntu-Installation wurde der OpenSSH-Server eingerichtet.
 
-Damit kann die VM vom Homelab-Host aus über SSH administriert werden.
+Die grundlegende Anmeldung vom Homelab-Host auf `srv-linux01` wurde zunächst per Benutzerpasswort getestet.
 
-Aktuell wird zunächst die grundlegende SSH-Verbindung verwendet. Als nächster Schritt soll die Authentifizierung auf einen eigenen SSH-Schlüssel für das Homelab umgestellt werden.
+Anschließend wurde ein eigenes Ed25519-Schlüsselpaar für das Homelab erstellt. Der öffentliche Schlüssel wurde auf `srv-linux01` hinterlegt und die Key-basierte Anmeldung erfolgreich getestet.
 
-Geplant:
+Zusätzlich wurde auf dem Pop!_OS-Host eine SSH-Client-Konfiguration eingerichtet, sodass die Verbindung über
 
-1. eigenen SSH-Schlüssel für das Homelab erstellen
-2. Public Key auf `srv-linux01` hinterlegen
-3. Anmeldung per Schlüssel testen
-4. Passwortauthentifizierung anschließend überprüfen und gegebenenfalls deaktivieren
+```bash
+ssh srv-linux01
+```
 
-Der bereits für GitHub verwendete private Schlüssel soll dafür nicht wiederverwendet werden.
+hergestellt werden kann.
+
+Der bereits für GitHub verwendete SSH-Schlüssel wurde dafür nicht wiederverwendet.
+
+Die Einrichtung und die durchgeführten Prüfungen sind in [`03-ssh.md`](03-ssh.md) dokumentiert.
+
+Die Passwortauthentifizierung wurde bisher nicht deaktiviert. Vor einer Änderung sollen zunächst die effektive SSH-Serverkonfiguration geprüft und die Key-basierte Anmeldung erneut über eine separate Sitzung getestet werden.
 
 ## Bisher überprüft
 
-Folgende Funktionen wurden nach der Installation geprüft:
+Folgende Funktionen wurden bisher geprüft:
 
 * VM startet erfolgreich
 * Netzwerkinterface ist aktiv
-* DHCP funktioniert
+* DHCP-Zuweisung über das libvirt-Netz funktioniert
 * Default Gateway ist vorhanden
 * Routing in andere Netze funktioniert
-* DNS-Konfiguration ist vorhanden
-* Forward-DNS funktioniert
-* Reverse-DNS funktioniert
+* DNS-Konfiguration über das libvirt-Netz ist vorhanden
+* Forward Lookup funktioniert
+* Reverse Lookup funktioniert
 * SSH-Server ist installiert und erreichbar
+* Key-basierte SSH-Authentifizierung funktioniert
+* SSH-Client-Konfiguration für `srv-linux01` funktioniert
 
 ## Nächste Schritte
 
 Für `srv-linux01` sind als Nächstes vorgesehen:
 
-* SSH-Key-Authentifizierung
+* effektive SSH-Serverkonfiguration untersuchen
+* Passwortauthentifizierung nach weiteren Tests bewerten
 * Paketverwaltung mit `apt`
 * Benutzer und Gruppen
 * Dateirechte
@@ -189,3 +197,4 @@ Für `srv-linux01` sind als Nächstes vorgesehen:
 * Logs mit `journalctl`
 * weitere Netzwerkdiagnose
 * spätere LVM-Erweiterung
+

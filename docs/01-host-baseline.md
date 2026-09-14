@@ -29,9 +29,7 @@ Für die virtuellen Maschinen wird ein libvirt Storage Pool unter `/var/lib/libv
 
 ## Netzwerk
 
-Heimnetz:
-
-`192.168.178.0/24`
+Der Homelab-Host ist an ein separates privates Heimnetz angebunden.
 
 Virtuelles libvirt-Netz:
 
@@ -64,4 +62,3 @@ Zugangsdaten und private Schlüssel werden nicht im Repository dokumentiert.
 Der vorhandene Rechner erfüllt die Anforderungen für die aktuelle erste Ausbaustufe des Homelabs.
 
 Ein dedizierter Virtualisierungsserver ist für einen späteren Ausbau vorgesehen, für die derzeitigen Linux-, Netzwerk- und Virtualisierungsübungen jedoch noch nicht erforderlich.
-

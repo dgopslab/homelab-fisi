@@ -1,87 +1,56 @@
 # Homelab FISI
 
-Dieses Repository dokumentiert mein persönliches Homelab während meiner Umschulung zum **Fachinformatiker für Systemintegration**.
+Dieses Repository dokumentiert mein Homelab während der Umschulung zum Fachinformatiker für Systemintegration.
 
-Ich nutze das Lab, um Themen aus der Umschulung praktisch nachzuvollziehen, Konfigurationen selbst auszuprobieren und auftretende Fehler systematisch zu untersuchen.
+Ich nutze die Umgebung, um Themen aus Linux, Windows Server, Virtualisierung und Netzwerken praktisch nachzuvollziehen. Die Systeme laufen als virtuelle Maschinen unter KVM/QEMU und libvirt.
 
 ## Aktueller Aufbau
 
-Das Homelab läuft derzeit auf meinem Desktop-PC unter **Pop!_OS 22.04 LTS**.
+| System | Aufgabe |
+|---|---|
+| Pop!_OS 22.04 LTS | Homelab-Host mit KVM/QEMU und libvirt |
+| `DC01` | Windows Server 2025 mit Active Directory und AD-integriertem DNS |
+| `srv-linux01` | Ubuntu Server 24.04.4 LTS, SSH-Ziel und Mitglied der AD-Domäne |
 
-Für die Virtualisierung verwende ich:
+Die beiden Server befinden sich im libvirt-NAT-Netz `192.168.122.0/24`.
 
-* KVM/QEMU
-* libvirt
-* virt-manager und virsh
-* das libvirt-Netzwerk `default` im NAT-Modus
+## Abgeschlossenes Teilprojekt: Active Directory und Linux
 
-Als erste Server-VM läuft:
+**Technischer Projektumfang: abgeschlossen**
 
-`srv-linux01` – Ubuntu Server 24.04.4 LTS
+Ziel des Teilprojekts war eine zentrale Identitätsverwaltung mit Active Directory und eine gruppenbasierte Zugriffssteuerung für einen Linux-Server.
 
-Die VM befindet sich aktuell im virtuellen Netz `192.168.122.0/24` und erhält ihre Netzwerkkonfiguration per DHCP über libvirt.
+Dafür wurden:
 
-Für den externen Zugriff auf den Homelab-Host verwende ich Tailscale.
+- die AD-Domäne `ad.dgopslab.test` eingerichtet,
+- Benutzer, Gruppen und Organisationseinheiten im Active Directory angelegt,
+- `srv-linux01` über Kerberos, `realmd` und SSSD in die Domäne aufgenommen,
+- AD-Anmeldungen auf Mitglieder der Gruppe `Linux-Zugang` beschränkt und
+- ein lokaler administrativer SSH-Rückfallzugang erhalten.
 
-## Bisher umgesetzt und untersucht
+Ein berechtigter AD-Testbenutzer konnte sich anmelden. Ein nicht berechtigter AD-Testbenutzer wurde abgewiesen. Nach einem Neustart blieben Domänenmitgliedschaft, Benutzerauflösung und Zugriffskontrolle erhalten.
 
-Im bisherigen Aufbau habe ich unter anderem:
+Auftretende Kerberos-Probleme wurden schrittweise eingegrenzt und nach den jeweiligen Korrekturen erneut geprüft. Die vollständige Fehleranalyse und die technischen Tests stehen in der Projektseite:
 
-* den Homelab-Host und seine Virtualisierungsumgebung überprüft
-* eine Ubuntu-Server-VM mit KVM/QEMU und libvirt eingerichtet
-* das virtuelle NAT-Netzwerk sowie Gateway, Routing und DNS-Verhalten untersucht
-* die VM über SSH administriert
-* ein eigenes Ed25519-Schlüsselpaar für das Homelab eingerichtet
-* die SSH-Client-Konfiguration für `srv-linux01` eingerichtet und getestet
-* Linux-Datei- und Verzeichnisrechte bei einer konkreten Berechtigungsstörung untersucht
+[Active Directory und Linux integrieren](docs/05-active-directory-linux-integration.md)
 
-Dabei dokumentiere ich möglichst nicht nur die verwendeten Befehle, sondern auch, was ich damit prüfe und wie ich das Ergebnis einordne.
+## Weitere Dokumentation
 
-## Dokumentation
-
-### Aufbau und Systeme
-
-* [`01-host-baseline.md`](docs/01-host-baseline.md) – Ausgangszustand des Homelab-Hosts
-* [`02-srv-linux01.md`](docs/02-srv-linux01.md) – Aufbau und erste Überprüfung der Linux-Server-VM
-* [`03-ssh.md`](docs/03-ssh.md) – Einrichtung und Test der SSH-Key-Authentifizierung
-* [`04-network-path-libvirt-nat.md`](docs/04-network-path-libvirt-nat.md) – Untersuchung eines IPv4-Paketwegs durch das libvirt-NAT-Netz
-
-### Troubleshooting
-
-* [`01-home-directory-permissions.md`](docs/troubleshooting/01-home-directory-permissions.md) – Fehlersuche bei einem Berechtigungsproblem im Home-Verzeichnis
-
-### Begleitende Notizen
-
-* [`glossar.md`](glossar.md) – Begriffe, die im Homelab verwendet werden
-
-## Arbeitsweise
-
-Bei Änderungen versuche ich nach einem festen Ablauf vorzugehen:
-
-1. Ist-Zustand erfassen
-2. technisches Verhalten verstehen
-3. Änderung durchführen
-4. Ergebnis testen
-5. Erkenntnisse dokumentieren
-
-Wenn etwas nicht funktioniert, möchte ich die Ursache nachvollziehen, bevor ich Änderungen vornehme.
-
-Ein Beispiel dafür ist die dokumentierte Fehlersuche bei einem Zugriffsproblem auf `~/.ssh`. Statt die Berechtigungsfehlermeldung direkt mit `sudo` zu umgehen, wurden zunächst Eigentümer und Verzeichnisrechte geprüft und die fehlerhaften Berechtigungen anschließend gezielt korrigiert.
+- [Host-Baseline](docs/01-host-baseline.md)
+- [srv-linux01](docs/02-srv-linux01.md)
+- [SSH-Zugriff](docs/03-ssh.md)
+- [IPv4-Paketweg im libvirt-NAT-Netz](docs/04-network-path-libvirt-nat.md)
+- [Fehlersuche bei Home-Verzeichnisrechten](docs/troubleshooting/01-home-directory-permissions.md)
+- [Glossar](glossar.md)
 
 ## Nächste Schritte
 
-Als Nächstes möchte ich den bestehenden Aufbau weiter vertiefen. Dazu gehören unter anderem:
+Das Homelab wird unabhängig vom abgeschlossenen AD-/Linux-Teilprojekt weiter ausgebaut. Vorgesehen sind:
 
-* effektive SSH-Serverkonfiguration untersuchen
-* Passwortauthentifizierung nach weiteren Tests bewerten
-* Benutzer, Gruppen und Linux-Dateirechte praktisch vertiefen
-* Prozesse, Services und systemd untersuchen
-* Logs mit `journalctl` auswerten
-* die vorbereitete LVM-Erweiterung praktisch durchführen
-* Netzwerkdiagnose weiter ausbauen
-
-Ein dedizierter Virtualisierungsserver und getrennte Netze mit VLANs sind mögliche spätere Ausbaustufen. Solche Erweiterungen möchte ich schrittweise umsetzen, wenn ich die dafür benötigten Grundlagen praktisch erarbeitet habe.
+- die vorbereitete LVM-Erweiterung auf `srv-linux01`,
+- bewusst durchgeführte und dokumentierte Ubuntu-Updates und
+- später eine stärkere Trennung der virtuellen Netze.
 
 ## Sicherheit
 
-Passwörter, private Schlüssel, Tokens und andere Zugangsdaten werden nicht im Repository gespeichert.
+Passwörter, private Schlüssel, Keytab-Inhalte, Tokens und andere Zugangsdaten werden nicht im Repository gespeichert.

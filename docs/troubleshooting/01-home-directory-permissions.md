@@ -6,8 +6,10 @@ Beim Einrichten der SSH-Client-Konfiguration auf dem Pop!_OS-Host schlugen Zugri
 
 Beispiel:
 
+In den folgenden Ausgaben ersetzt `BENUTZERNAME` den tatsächlichen lokalen Benutzernamen.
+
 ```text
-Zugriff auf '/home/jekkyl/.ssh/config' nicht möglich:
+Zugriff auf '/home/BENUTZERNAME/.ssh/config' nicht möglich:
 Keine Berechtigung
 ```
 
@@ -24,7 +26,7 @@ echo "$HOME"
 Ergebnis:
 
 ```text
-/home/jekkyl
+/home/BENUTZERNAME
 ```
 
 Anschließend wurden die Rechte des Home- und SSH-Verzeichnisses geprüft:
@@ -36,7 +38,7 @@ ls -ld "$HOME" "$HOME/.ssh"
 Für das Home-Verzeichnis wurde festgestellt:
 
 ```text
-drw------- ... /home/jekkyl
+drw------- ... /home/BENUTZERNAME
 ```
 
 Dem Besitzer fehlte damit das Execute-Bit `x`.
@@ -46,7 +48,7 @@ Bei einem Verzeichnis bedeutet `x`, dass das Verzeichnis betreten beziehungsweis
 Obwohl der Benutzer Eigentümer des Home-Verzeichnisses war, konnte deshalb nicht auf darunterliegende Pfade wie
 
 ```text
-/home/jekkyl/.ssh
+/home/BENUTZERNAME/.ssh
 ```
 
 zugegriffen werden.
@@ -62,7 +64,7 @@ chmod 700 "$HOME"
 Danach ergab die Kontrolle:
 
 ```text
-drwx------ ... /home/jekkyl
+drwx------ ... /home/BENUTZERNAME
 ```
 
 Der Zugriff auf `~/.ssh` war anschließend wieder möglich.

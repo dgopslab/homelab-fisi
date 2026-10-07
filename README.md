@@ -24,7 +24,7 @@ Im virtuellen Netz `192.168.122.0/24` laufen derzeit zwei Server-VMs:
 
 `srv-linux01` verwendet eine feste Netzwerkkonfiguration und nutzt `DC01` als DNS-Server.
 
-Für den externen Zugriff auf den Homelab-Host verwende ich Tailscale.
+Für den Zugriff von unterwegs nutze ich Cloudflare Tunnel mit Cloudflare Access. Tailscale hatte ich zuerst eingesetzt, am Schulungsstandort funktionierte es nicht. Die Entscheidung und der Aufbau stehen in [`06-fernzugriff-cloudflare.md`](docs/06-fernzugriff-cloudflare.md).
 
 ## Bisher umgesetzt und untersucht
 
@@ -42,6 +42,7 @@ Im bisherigen Aufbau habe ich unter anderem:
 - `srv-linux01` mit realmd, adcli und SSSD in die Domäne eingebunden
 - die AD-Anmeldung auf Mitglieder von `Linux-Zugang` beschränkt und mit einem berechtigten und einem nicht berechtigten Testbenutzer geprüft, auch nach einem Neustart
 - zwei getrennte Kerberos-Probleme beim Domänenbeitritt untersucht und behoben
+- einen Fernzugriff auf Cockpit über Cloudflare Tunnel und Cloudflare Access aufgebaut, mit Einmal-PIN abgesichert und vom Schulungsstandort aus getestet; die Fehlersuche bei einer Anmeldeschleife dokumentiert
 
 Dabei dokumentiere ich möglichst nicht nur die verwendeten Befehle, sondern auch, was ich damit prüfe und wie ich das Ergebnis einordne.
 
@@ -54,6 +55,7 @@ Dabei dokumentiere ich möglichst nicht nur die verwendeten Befehle, sondern auc
 - [`03-ssh.md`](docs/03-ssh.md) – Einrichtung und Test der SSH-Key-Authentifizierung
 - [`04-network-path-libvirt-nat.md`](docs/04-network-path-libvirt-nat.md) – Untersuchung eines IPv4-Paketwegs durch das libvirt-NAT-Netz
 - [`05-active-directory-linux-integration.md`](docs/05-active-directory-linux-integration.md) – Einbindung von `srv-linux01` in Active Directory mit gruppenbasierter Zugriffskontrolle
+- [`06-fernzugriff-cloudflare.md`](docs/06-fernzugriff-cloudflare.md) – Fernzugriff über Cloudflare Tunnel und Cloudflare Access: Entscheidung, Aufbau, Tests, Fehlersuche und Grenzen
 
 ### Troubleshooting
 
@@ -80,20 +82,21 @@ Ein Beispiel dafür ist die dokumentierte Fehlersuche bei einem Zugriffsproblem 
 
 Ein weiteres Beispiel ist der fehlgeschlagene Domänenbeitritt. Bevor das Kennwort des Join-Kontos neu gesetzt wurde, wurde auf `DC01` geprüft, ob das Konto gesperrt oder das Kennwort abgelaufen war.
 
+### Einsatz von KI
+
+Ich nutze KI als Werkzeug und Sparringspartner, vor allem für Recherche, den Vergleich von Alternativen und die Fehlersuche. Vorschläge und Anleitungen übernehme ich nicht ungeprüft: Ich führe die Schritte selbst aus, teste das Ergebnis und halte meine Entscheidungen mit Begründung fest. Welche Rolle KI bei einem Thema hatte, steht im jeweiligen Dokument.
+
 ## Nächste Schritte
 
 Als Nächstes möchte ich den bestehenden Aufbau weiter vertiefen. Dazu gehören unter anderem:
 
-- effektive SSH-Serverkonfiguration untersuchen
-- Passwortauthentifizierung nach weiteren Tests bewerten
-- Benutzer, Gruppen und Linux-Dateirechte praktisch vertiefen
-- Prozesse, Services und systemd untersuchen
-- Logs mit `journalctl` auswerten
-- die vorbereitete LVM-Erweiterung praktisch durchführen
-- Netzwerkdiagnose weiter ausbauen
+- den bestehenden Zustand prüfen: Rückfallverfahren an einer Kopie ausprobieren und den Testzeitraum von `DC01` (Windows Server 2025 Evaluation) kontrollieren
+- den Fernzugriff abschließen: Notfall-Abschaltung testen, RDP im Browser für `DC01` einrichten
+- die Zielarchitektur des Netzes festlegen und eine IPv6-Adresse auslesen und erklären
+- einen Windows-11-Client einrichten, testen und ein Übergabeprotokoll schreiben
 
 Ein dedizierter Virtualisierungsserver, getrennte Netze mit VLANs, ein zweiter Domänencontroller und eine unabhängige Sicherungsstrategie für Active Directory sind mögliche spätere Ausbaustufen. Solche Erweiterungen möchte ich schrittweise umsetzen, wenn ich die dafür benötigten Grundlagen praktisch erarbeitet habe.
 
 ## Sicherheit
 
-Passwörter, private Schlüssel, Tokens und andere Zugangsdaten werden nicht im Repository gespeichert. Kontonamen und Kennwörter aus dem AD-Aufbau sowie Inhalte der Kerberos-Keytab werden nicht dokumentiert.
+Passwörter, private Schlüssel, Tokens und andere Zugangsdaten werden nicht im Repository gespeichert. Der Fernzugriff läuft über einen ausgehenden Tunnel, eine Portweiterleitung am Router habe ich dafür nicht eingerichtet. Domainname, Tunnel-Konfiguration und Zugangsdaten stehen nicht im Repository; Einschätzung und Grenzen der Absicherung stehen in [`06-fernzugriff-cloudflare.md`](docs/06-fernzugriff-cloudflare.md). Kontonamen und Kennwörter aus dem AD-Aufbau sowie Inhalte der Kerberos-Keytab werden nicht dokumentiert.

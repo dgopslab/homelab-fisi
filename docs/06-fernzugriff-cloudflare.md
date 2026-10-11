@@ -73,14 +73,25 @@ Browser → Cloudflare Access (Anmeldung) → Cloudflare Tunnel → cloudflared 
 
 **Umgehung:** Nach der PIN-Anmeldung die Adresse erneut mit der Eingabetaste aufrufen, statt auf die automatische Weiterleitung zu warten. Eine dauerhafte Lösung habe ich nicht umgesetzt.
 
+## Notfall-Abschaltung
+
+Der Zugang lässt sich in zwei Stufen sperren:
+
+1. **Tunnel stoppen (am Host):** `sudo systemctl stop cloudflared`. Danach ist das Homelab von außen nicht erreichbar und Cloudflare zeigt Fehler 1033 (Tunnel nicht erreichbar). Zurück geht es mit `sudo systemctl start cloudflared`. `stop` gilt nur bis zum nächsten Neustart, weil der Dienst per `enable` automatisch startet. Dauerhaft sperrt `sudo systemctl disable --now cloudflared`. Diese Stufe braucht Zugriff auf den Host.
+2. **Access-Policy sperren (Cloudflare-Dashboard):** Die Aktion der Policy von Allow auf Block setzen. Der Tunnel läuft weiter, aber Access sendet keine Einmal-PIN mehr. Das geht ohne Zugriff auf den Host, zum Beispiel vom Smartphone.
+
+**Test am 10.10.2026**
+
+- Stufe 1 vom Smartphone im Mobilfunknetz: Nach dem Stopp erschien Fehler 1033, nach dem Start war Cockpit wieder erreichbar.
+- Stufe 2: Mit Block kam keine PIN mehr an. Nach dem Zurücksetzen auf Allow kam die PIN erst nach einigen Minuten wieder. Eine Änderung der Policy wirkt also mit Verzögerung. Wie schnell die Sperre selbst greift, habe ich nicht gemessen.
+- Nicht getestet: das Beenden bestehender Sitzungen im Dashboard (Users, Revoke session).
+
 ## Grenzen und Sicherheitsbewertung
 
 - Der Zugang hängt an einem Cloudflare-Konto und an einem E-Mail-Postfach. Fällt eines von beiden aus oder wird übernommen, ist der Zugang betroffen.
 - Der Zugang funktioniert nur, solange der Host läuft. Dafür habe ich den Ruhezustand abgeschaltet und geprüft, dass die für den Tunnel benötigten Dienste beim Start automatisch starten.
 - Zwischen `cloudflared` und Cockpit ist die Zertifikatsprüfung ausgeschaltet. Die Verbindung bleibt lokal auf dem Host.
 - Es gibt keine Überwachung und keine Benachrichtigung bei Ausfall des Tunnels.
-
-**Notfall-Abschaltung:** Noch nicht beschrieben und nicht getestet.
 
 ## Was ich nicht gemacht habe
 
@@ -92,7 +103,7 @@ Browser → Cloudflare Access (Anmeldung) → Cloudflare Tunnel → cloudflared 
 ## Nächste Schritte
 
 - RDP im Browser für `DC01` einrichten: private Route nur zu dieser einen Adresse, Access-Target, DNS-Eintrag und RDP-Anwendung. Die Route bleibt auf eine Adresse beschränkt, damit über den Zugang nicht das gesamte VM-Netz erreichbar wird.
-- Notfall-Abschaltung testen und dokumentieren.
+- Beenden bestehender Sitzungen testen und die Geschwindigkeit der Policy-Sperre messen.
 - Tunnel-Ausfall überwachen (spätere Phase der Roadmap).
 
 ## Einsatz von KI

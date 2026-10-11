@@ -56,6 +56,7 @@ Dabei dokumentiere ich möglichst nicht nur die verwendeten Befehle, sondern auc
 - [`04-network-path-libvirt-nat.md`](docs/04-network-path-libvirt-nat.md) – Untersuchung eines IPv4-Paketwegs durch das libvirt-NAT-Netz
 - [`05-active-directory-linux-integration.md`](docs/05-active-directory-linux-integration.md) – Einbindung von `srv-linux01` in Active Directory mit gruppenbasierter Zugriffskontrolle
 - [`06-fernzugriff-cloudflare.md`](docs/06-fernzugriff-cloudflare.md) – Fernzugriff über Cloudflare Tunnel und Cloudflare Access: Entscheidung, Aufbau, Tests, Fehlersuche und Grenzen
+- [`07-betriebscheck.md`](docs/07-betriebscheck.md) – manueller Betriebscheck für den bestehenden Aufbau und erster Teillauf
 
 ### Troubleshooting
 
@@ -90,8 +91,8 @@ Ich nutze KI als Werkzeug und Sparringspartner, vor allem für Recherche, den Ve
 
 Als Nächstes möchte ich den bestehenden Aufbau weiter vertiefen. Dazu gehören unter anderem:
 
-- den bestehenden Zustand prüfen: Rückfallverfahren an einer Kopie ausprobieren und den Testzeitraum von `DC01` (Windows Server 2025 Evaluation) kontrollieren
-- den Fernzugriff abschließen: Notfall-Abschaltung testen, RDP im Browser für `DC01` einrichten
+- den bestehenden Zustand anhand des [Betriebschecks](docs/07-betriebscheck.md) prüfen: Rückfallverfahren an einer Kopie ausprobieren und den Testzeitraum von `DC01` (Windows Server 2025 Evaluation) kontrollieren
+- den Fernzugriff abschließen: RDP im Browser für `DC01` einrichten
 - die Zielarchitektur des Netzes festlegen und eine IPv6-Adresse auslesen und erklären
 - einen Windows-11-Client einrichten, testen und ein Übergabeprotokoll schreiben
 
